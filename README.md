@@ -444,6 +444,96 @@ GROUP BY s.category, repeat_customers, total_customers
 ORDER BY revenue DESC;
 ```
 
+### **Demographic Segmentation (Age Group × Gender)**
+Which demographic contributes the most revenue?
+
+```jsx
+WITH customer_segments AS (
+    SELECT
+        customer_id,
+        CASE 
+            WHEN age < 20 THEN 'Under 20'
+            WHEN age BETWEEN 20 AND 29 THEN '20–29'
+            WHEN age BETWEEN 30 AND 39 THEN '30–39'
+            WHEN age BETWEEN 40 AND 49 THEN '40–49'
+            ELSE '50+'
+        END AS age_group,
+        gender
+    FROM marketing.dim_customers
+),
+segment_sales AS (
+    SELECT
+        cs.age_group,
+        cs.gender,
+        COUNT(DISTINCT fs.customer_id) AS customers,
+        SUM(fs.revenue) AS total_revenue,
+        SUM(fs.quantity) AS total_units
+    FROM marketing.fact_sales fs
+    JOIN customer_segments cs USING (customer_id)
+    GROUP BY cs.age_group, cs.gender
+),
+totals AS (
+    SELECT
+        SUM(customers) AS all_customers,
+        SUM(total_revenue) AS all_revenue,
+        SUM(total_units) AS all_units
+    FROM segment_sales
+)
+SELECT
+    s.*,
+    ROUND(s.customers::numeric / t.all_customers * 100, 2) AS pct_customers,
+    ROUND(s.total_revenue::numeric / t.all_revenue::numeric * 100, 2) AS pct_revenue
+FROM segment_sales s CROSS JOIN totals t
+ORDER BY pct_revenue DESC;
+```
+### **Frequency Segmentation (Heavy Buyers vs One-Time Buyers)**
+Who drives most revenue and LTV?
+
+```jsx
+WITH customer_freq AS (
+    SELECT
+        customer_id,
+        COUNT(*) AS purchase_count
+    FROM marketing.fact_sales
+    GROUP BY customer_id
+),
+freq_segment AS (
+    SELECT 
+        customer_id,
+        CASE 
+            WHEN purchase_count >= 10 THEN 'Whales (10+ orders)'
+            WHEN purchase_count >= 5 THEN 'Heavy Buyers (5–9)'
+            WHEN purchase_count >= 2 THEN 'Repeat Buyers (2–4)'
+            ELSE 'One-Time Buyers'
+        END AS segment
+    FROM customer_freq
+),
+segment_sales AS (
+    SELECT
+        segment,
+        COUNT(*) AS customers,
+        SUM(fs.revenue) AS total_revenue,
+        SUM(fs.quantity) AS total_units
+    FROM freq_segment f
+    JOIN marketing.fact_sales fs USING (customer_id)
+    GROUP BY segment
+),
+totals AS (
+    SELECT
+        SUM(customers) AS all_customers,
+        SUM(total_revenue) AS all_revenue,
+        SUM(total_units) AS all_units
+    FROM segment_sales
+)
+SELECT
+    s.*,
+    ROUND(s.customers::numeric / t.all_customers * 100, 2) AS pct_customers,
+    ROUND(s.total_revenue::numeric / t.all_revenue::numeric * 100, 2) AS pct_revenue,
+    ROUND(s.total_units::numeric / t.all_units * 100, 2) AS pct_units
+FROM segment_sales s CROSS JOIN totals t
+ORDER BY pct_revenue DESC;
+```
+
 ---
 
 ## **3. Channel & Campaign Performance**
@@ -498,38 +588,6 @@ ORDER BY spend DESC;
 
 ---
 
-## **4. Product–Campaign Matching**
-
-### **Which campaign sells which products**
-
-```sql
-SELECT
-  p.item_name,
-  c.campaign_name,
-  SUM(fs.quantity) AS units_sold,
-  SUM(fs.revenue) AS revenue
-FROM marketing.fact_sales fs
-JOIN marketing.dim_products p ON fs.product_id = p.product_id
-JOIN marketing.dim_campaigns c ON fs.campaign_id = c.campaign_id
-GROUP BY p.item_name, c.campaign_name
-ORDER BY revenue DESC
-LIMIT 10;
-```
-
-### **AOV by Campaign**
-
-```sql
-SELECT
-  c.campaign_name,
-  ROUND(SUM(fs.revenue)::numeric / COUNT(fs.sale_id), 2) AS aov
-FROM marketing.fact_sales fs
-JOIN marketing.dim_campaigns c ON fs.campaign_id = c.campaign_id
-GROUP BY c.campaign_name
-ORDER BY aov DESC;
-```
-
----
-
 # 🏹 **PHASE 4 — Business Decisions**
 
 ### **1. Product Strategy**
@@ -543,6 +601,7 @@ ORDER BY aov DESC;
 * Use gateway products for **CRM reactivation**
 * Improve low-loyalty categories
 * Apply **personalized recommendations**
+* Segment customers by demographics & purchase frequency to tailor messaging, promos, and retention flows
 
 ### **3. Channel & Campaign Strategy**
 
@@ -550,16 +609,10 @@ ORDER BY aov DESC;
 * Pause wasteful spenders
 * Improve creatives & landing pages based on CTR/AOV
 
-### **4. Product–Campaign Matching**
-
-* Assign items to strongest channels (e.g. paid search for high AOV)
-* Scale winning combinations
-* Segment CRM audiences by campaign behavior
-
 ---
 
 <p align="center">
   <h2 align="center">🚀 <b>This project is still growing!</b></h2>
-  <p align="center">More analytics layers, visual dashboards, and automated insights are on the way.</p>
-  <p align="center"><b>Sit tight for the next update 👀🔥</b></p>
+  <p align="center">More analytics layers and visual dashboards are on the way.</p>
+  <p align="center"><b>Please stay tuned for the update 👀🔥</b></p>
 </p>
