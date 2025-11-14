@@ -102,7 +102,8 @@ psql -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -d "$DB_NAME" -f 04_views.sql
 
 echo "-------------------------------------"
 echo "ETL Pipeline completed successfully for '$DB_NAME'!"
-```sql
+```
+
 ### ETL Execution (Shell Script)
 This phase builds the entire backend foundation of the project. The pipeline set up schema → loads raw CSVs → transforms them → and generates clean, analysis-ready tables and KPI views.
 ```bash
@@ -176,7 +177,7 @@ print("Step 2 completed successfully.")
 * Builds `dim_*` tables
 * Populates `fact_sales` and `fact_spend` correctly
 
-```
+```sql
 -- 03_transform_step.sql: Transform staging data -> marketing schema
 
 -- 1. Dates
@@ -447,7 +448,7 @@ ORDER BY revenue DESC;
 ### **Demographic Segmentation (Age Group × Gender)**
 Which demographic contributes the most revenue?
 
-```jsx
+```sql
 WITH customer_segments AS (
     SELECT
         customer_id,
@@ -489,7 +490,7 @@ ORDER BY pct_revenue DESC;
 ### **Frequency Segmentation (Heavy Buyers vs One-Time Buyers)**
 Who drives most revenue and LTV?
 
-```jsx
+```sql
 WITH customer_freq AS (
     SELECT
         customer_id,
