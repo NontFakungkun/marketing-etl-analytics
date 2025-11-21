@@ -581,9 +581,8 @@ LEFT JOIN marketing.fact_sales fs
       AND sp.campaign_id = fs.campaign_id
 JOIN marketing.dim_campaigns c ON c.campaign_id = sp.campaign_id
 GROUP BY c.campaign_name, c.channel
-HAVING SUM(sp.spend) > 5000
-   AND SUM(sp.clicks) < 100
-   AND SUM(fs.revenue) < 3000
+HAVING SUM(sp.clicks)/SUM(sp.spend) < 0.1
+   AND SUM(fs.revenue)/SUM(sp.spend) < 0.5
 ORDER BY spend DESC;
 ```
 
@@ -593,22 +592,151 @@ ORDER BY spend DESC;
 
 ### **1. Product Strategy**
 
-* Boost **hero products** through ads & visibility
-* Fix or remove **weak, low-margin** products
-* Expand **high-margin** items (bundles, upsells)
+**1.1 Boost Hero Products Through Ads & Visibility**
+
+**Insights:** *Box Logo Tee* is the clear **Hero Product** — highest units sold and highest repeat buyers (3× second place).
+
+**Strategic Actions:**
+
+- Increase paid and organic placement (homepage, PDP banners, “most loved” section).
+- Use Box Logo Tee in **performance ads** to drive conversions (high CTR, high repeat-purchase behavior).
+- Feature it in **bundles**, **email triggers**, **TikTok content**, and **styling reels**.
+
+---
+
+**1.2 Fix or Remove Weak, Low-Margin Products**
+
+**Insights:** Accessories have **high margin %** but the **lowest actual profit** → “free riders.”
+
+**Strategic Actions:**
+
+- Improve visibility through cross-sell boxes (“Complete the Look”).
+- If still underperforming → **deprioritize**, reduce SKUs, or convert to **add-on products** only.
+- Fix: better photos, clearer value props, or convert into impulse-buy items in checkout.
+
+---
+
+**1.3 Expand High-Margin & High-Potential Items**
+
+**Insights:**
+
+- High-profit items: **Varsity Jacket, Coach Jacket, Zip Hoodie, Hoodies, Cargo/Work Pants**.
+- These have **lower unit sales but highest profit potential**.
+
+**Strategic Actions:**
+
+- Promote these items through **seasonal campaigns**, **editorial lookbooks**, and **retargeting ads**.
+- Add **high-margin bundles** (Jacket + Tee, Hoodie + Bottoms).
+- Push AOV boosters: 1-click upsells, “Buy Jacket → get Cap at 20% off”.
+- Use scarcity messaging (limited drop colors) to increase perceived value.
+
+---
 
 ### **2. Customer Strategy**
 
-* Use gateway products for **CRM reactivation**
-* Improve low-loyalty categories
-* Apply **personalized recommendations**
-* Segment customers by demographics & purchase frequency to tailor messaging, promos, and retention flows
+**2.1 Use Gateway Products for CRM Reactivation**
+
+**Insights:** Box Logo Tee = **top repeat-purchase driver**; highest number of returning buyers.
+
+**Strategic Actions:**
+
+- Winback emails: “Your favorite Box Logo Tee is back in stock.”
+- Reactivation bundle: Tee + Cap at promo rate.
+- Abandoned-cart automation featuring hero products.
+
+---
+
+**2.2 Apply Personalized Recommendations**
+
+**Insights:**
+
+- High repeat purchase rate: **75.4% retention** (very strong).
+- 96% of revenue from customers with ≥ 2 orders.
+
+**Strategic Actions:**
+
+- Recommendation engines based on category behavior:
+    - Bought Tee → recommend Pants + Hoodie
+    - Bought Outerwear → recommend Caps + Bottoms
+- PDP personalization: “Frequently Bought Together”.
+- Post-purchase flows tailored by previous categories bought.
+
+---
+
+**2.3 Segment Customers by Demographics & Frequency**
+
+**Insights:**
+
+- 86% of revenue from **age 20–39**, especially **20–29 males**.
+- Heavy Buyers & Repeat Buyers drive the majority of LTV.
+
+**Strategic Actions:**
+
+**By Demographics**
+
+- **20–29 Male**: push Outerwear, Hoodies, Pants (their high-value categories).
+- **20–29 Female**: promote gender-neutral items & accessories.
+
+**By Purchase Frequency**
+
+- **Heavy Buyers (5–9 orders)**:
+    - VIP early access, loyalty perks, exclusive drops.
+- **Repeat Buyers (2–4 orders)**:
+    - “Complete your fit” recommendations.
+    - Style guides + outfit bundles.
+- **One-time buyers:**
+    - Remarketing with Box Logo Tee (gateway).
+    - First purchase discount flows.
+
+---
 
 ### **3. Channel & Campaign Strategy**
 
-* Reallocate budget to profitable channels
-* Pause wasteful spenders
-* Improve creatives & landing pages based on CTR/AOV
+**3.1 Reallocate Budget to Profitable Channels**
+
+**Insights:**
+
+- **Email** = best performing channel (ROAS 5, ROI 4).
+- **Affiliate** = underfunded but high ROI (ROAS 3.82).
+- **Paid Search** = negative ROI (spend > revenue).
+
+**Strategic Actions:**
+
+- Increase spend on **Email + Affiliate**.
+- Maintain Social for discovery (creative-focused).
+- Reduce or pause **Paid Search** until optimized.
+
+---
+
+### **3.2 Pause Wasteful Spenders**
+
+**Insights:**
+
+- Paid Search has worst revenue/spend ratio.
+- Social also appears among weakest performers.
+
+**Strategic Actions:**
+
+- Pause low CTR, high CPC, low CVR ad sets.
+- Audit search terms; cut irrelevant keywords.
+
+---
+
+### **3.3 Improve Creatives & Landing Pages (Based on CTR / AOV / Returns)**
+
+**Insights:** High-potential products (jackets, hoodies) contribute highest profit → need better showcasing.
+
+**Creative Improvements:**
+
+- UGC try-ons, streetwear styling videos.
+- Before/after fit comparisons.
+- Show material quality (especially for outerwear).
+
+**Landing Page Improvements:**
+
+- Clear sizing & fabric details to reduce returns.
+- Social proof: reviews, photos, repeat-buyer quotes.
+- A/B test seasonal banners highlighting high-margin products.
 
 ---
 
